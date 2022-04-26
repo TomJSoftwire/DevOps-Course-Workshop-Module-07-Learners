@@ -8,5 +8,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
+      - name: Build dotnet
         run: dotnet build
+
+      - name: Test dotnet
+        run: dotnet test
+
+      - name: Build TS
+        working-directory: ./DotnetTemplate.Web
+        run: |
+          npm install
+          npm run build
+
+      - name: Test TS
+        working-directory: ./DotnetTemplate.Web
+        run: |
+          npm t
+          npm run lint
