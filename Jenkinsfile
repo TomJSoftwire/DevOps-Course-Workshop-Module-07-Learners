@@ -7,7 +7,13 @@ pipeline {
                 docker "node:17-bullseye"
             }
             steps {
-                echo 'Building..'
+                dir('DotnetTemplate.Web') {
+                    echo 'Building..'
+                    npm install
+                    npm run build
+                    npm t
+                    npm run lint
+                }
             }
         }
         stage('Build and test dotnet') {
@@ -15,7 +21,8 @@ pipeline {
                 docker "mcr.microsoft.com/dotnet/sdk:6.0"
             }
             steps {
-                echo 'Testing..'
+                dotnet build
+                dotnet test
             }
         }
     }
