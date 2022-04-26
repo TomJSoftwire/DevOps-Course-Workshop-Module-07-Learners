@@ -9,10 +9,10 @@ pipeline {
             steps {
                 dir('DotnetTemplate.Web') {
                     echo 'Building..'
-                    npm install
-                    npm run build
-                    npm t
-                    npm run lint
+                    sh 'npm install'
+                    sh 'npm run build'
+                    sh 'npm t'
+                    sh 'npm run lint'
                 }
             }
         }
@@ -21,8 +21,8 @@ pipeline {
                 docker "mcr.microsoft.com/dotnet/sdk:6.0"
             }
             steps {
-                dotnet build
-                dotnet test
+                sh 'dotnet build'
+                sh 'dotnet test'
             }
         }
     }
