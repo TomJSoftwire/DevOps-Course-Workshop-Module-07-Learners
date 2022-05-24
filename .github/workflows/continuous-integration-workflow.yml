@@ -66,6 +66,9 @@ jobs:
       - name: Login to Heroku docker
         run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
 
+      - name: Tag image for heroku
+        run: docker tag thomasjohnstonsoftwire/dotnettemplate:latest registry.heroku.com/module-7-thomas-johnston/web
+
       - name: Push image to heroku
         run: docker push registry.heroku.com/module-7-thomas-johnston/web
 
