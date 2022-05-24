@@ -1,5 +1,11 @@
 name: Continuous Integration
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -7,3 +13,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set up dotnet SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build dotnet
+        run: dotnet build
+
+      - name: Test dotnet
+        run: dotnet test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Build TS
+        working-directory: ./DotnetTemplate.Web
+        run: |
+          npm install
+          npm run build
+
+      - name: Test TS
+        working-directory: ./DotnetTemplate.Web
+        run: npm t
+
+      - name: Lint TS
+        working-directory: ./DotnetTemplate.Web
+        run: npm run lint

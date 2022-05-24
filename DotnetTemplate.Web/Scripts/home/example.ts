@@ -1,5 +1,5 @@
 export function functionOne() {
-  console.log('Hello world!');
+  console.log('Hola mundo!');
 }
 
 export function functionTwo() {
