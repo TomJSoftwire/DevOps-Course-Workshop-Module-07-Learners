@@ -1,0 +1,45 @@
+name: Continuous Deployment
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    name: Publish to Docker Hub
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker build
+        run: docker build -t thomasjohnstonsoftwire/dotnettemplate:latest .
+
+      - name: Docker push
+        run: docker push thomasjohnstonsoftwire/dotnettemplate:latest
+
+      - name: Login to Heroku docker
+        run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+
+      - name: Tag image for heroku
+        run: docker tag thomasjohnstonsoftwire/dotnettemplate:latest registry.heroku.com/module-7-thomas-johnston/web
+
+      - name: Push image to heroku
+        run: docker push registry.heroku.com/module-7-thomas-johnston/web
+
+  release:
+    name: Release to Heroku
+    needs: publish
+    runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    steps:
+      - name: Deploy site
+        run: heroku container:release -a module-7-thomas-johnston web

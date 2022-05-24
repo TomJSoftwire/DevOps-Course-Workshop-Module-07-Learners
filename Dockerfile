@@ -1,4 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+RUN apt-get update
+RUN apt-get install -y \
+build-essential
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 && apt-get install -y nodejs
@@ -6,8 +9,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 COPY ./DotnetTemplate.Web /app
 WORKDIR /app
 
-RUN dotnet build
-RUN npm install
+RUN dotnet publish -c release -o /app
 
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build /app ./
 
-ENTRYPOINT [ "dotnet", "run" ]
+ENTRYPOINT [ "dotnet", "DotnetTemplate.Web.dll" ]
