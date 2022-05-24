@@ -63,6 +63,12 @@ jobs:
       - name: Docker push
         run: docker push thomasjohnstonsoftwire/dotnettemplate:latest
 
+      - name: Login to Heroku docker
+        run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+
+      - name: Push image to heroku
+        run: docker push registry.heroku.com/module-7-thomas-johnston/web
+
   release:
     name: Release to Heroku
     needs: publish
@@ -70,14 +76,5 @@ jobs:
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
     steps:
-      - name: Login to Heroku docker
-        run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-
-      - name: Pull image
-        run: docker pull thomasjohnstonsoftwire/dotnettemplate:latest && docker tag thomasjohnstonsoftwire/dotnettemplate:latest registry.heroku.com/module-7-thomas-johnston/web
-
-      - name: Push image to heroku
-        run: docker push registry.heroku.com/module-7-thomas-johnston/web
-
       - name: Deploy site
         run: heroku container:release -a module-7-thomas-johnston web
