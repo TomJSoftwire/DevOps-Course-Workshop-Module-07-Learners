@@ -45,7 +45,7 @@ jobs:
         run: npm run lint
   publish:
     name: Publish to Docker Hub
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
